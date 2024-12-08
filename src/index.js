@@ -98,16 +98,23 @@ document.addEventListener("DOMContentLoaded", () => {
 	console.log("handleLogin importé:", handleLogin);
 	
 	const loginButton = document.createElement('button');
-	loginButton.textContent = 'Se connecter avec Google';
 	loginButton.style.zIndex = '1000';
 	loginButton.style.position = 'absolute';
-	loginButton.style.top = '10px';
-	loginButton.style.right = '10px';
-	loginButton.style.padding = '10px 20px';
-	loginButton.style.fontSize = '16px';
+	loginButton.style.bottom = '10px'; // Placer en bas
+	loginButton.style.left = '10px';   // Placer à gauche
+	loginButton.style.padding = '10px'; 
+	loginButton.style.borderRadius = '50%'; // Faire une capsule ronde
+	loginButton.style.backgroundColor = 'rgba(255, 255, 255, 0.8)'; // Fond blanc avec transparence
 	loginButton.style.cursor = 'pointer';
-	loginButton.style.backgroundColor = '#4CAF50'; 
-	loginButton.style.color = 'white'; 
+	loginButton.style.border = 'none'; 
+	
+	// Ajouter l'image comme icône
+	const icon = document.createElement('img');
+	icon.src = './user.svg'; // Assurez-vous que 'user.png' est bien présent à la racine
+	icon.style.width = '30px'; // Ajuster la taille de l'icône
+	icon.style.height = '30px'; 
+
+	loginButton.appendChild(icon);
 	
 	loginButton.addEventListener('click', handleLogin);
 	loginButton.addEventListener('touchstart', (event) => {
