@@ -64,18 +64,10 @@ const reflexion = regl({
 
 // Écouteur d'état d'authentification
 const { auth } = require('../firebase'); // Assurez-vous d'importer auth
-const imageModule = require('./image'); // Importer le module image
 
 auth.onAuthStateChanged(async (user) => {
 	if (user) {
 		console.log("Utilisateur connecté:", user.email);
-		// Récupérer les images dès que l'utilisateur est connecté
-		imageModule.fetch(regl, (painting) => {
-			// Traitement de chaque peinture ici
-			console.log("Peinture récupérée:", painting);
-		}, () => {
-			console.log("Tous les tableaux ont été récupérés!");
-		});
 	} else {
 		console.log("Aucun utilisateur connecté. Veuillez vous connecter.");
 	}
@@ -85,7 +77,7 @@ regl.frame(({ time }) => {
 	stats.begin();
 	fps.tick({ time });
 	placement.update(fps.pos, fps.fmouse[1], fovX());
-	console.log("Peintures affichées:", placement.batch().length); // Log du nombre de peintures
+	// console.log("Peintures affichées:", placement.batch().length); // Log du nombre de peintures
 	regl.clear({ color: [0, 0, 0, 1], depth: 1 });
 	context(() => {
 		if(useReflexion) {
