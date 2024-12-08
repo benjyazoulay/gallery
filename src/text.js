@@ -2,17 +2,24 @@
 
 const textHeight = 32;
 const textCanvas = document.createElement('canvas');
-//document.body.appendChild(textCanvas);
-//textCanvas.style.position = "fixed";
 const maxWidth = textCanvas.width = textCanvas.height = 1024;
 const ctx = textCanvas.getContext('2d');
+
+// Fonction pour charger la police
+async function loadFont() {
+    const font = new FontFace('CalSans', 'url(fonts/CalSans-SemiBold.ttf)'); // Indiquez le chemin correct vers la police
+    await font.load();
+    document.fonts.add(font); // Ajoutez la police au document
+    ctx.font = textHeight + "px 'CalSans', sans-serif"; // Utilisez la police après qu'elle a été ajoutée
+}
+loadFont(); // Appelez la fonction pour charger la police
+
 ctx.mozImageSmoothingEnabled = false;
 ctx.webkitImageSmoothingEnabled = false;
-ctx.font = textHeight + "px Verdana";
 ctx.textBaseline = "bottom";
 ctx.fillStyle = "#aaa";
 
-// from https://delphic.me.uk/tutorials/webgl-text
+// Reste du code...
 function createMultilineText(ctx, textToWrite, maxWidth, text) {
     var currentText = textToWrite;
     var futureText;
@@ -23,8 +30,6 @@ function createMultilineText(ctx, textToWrite, maxWidth, text) {
     var wordsInCurrent, wordArrayLength;
     wordsInCurrent = wordArrayLength = wordArray.length;
 
-    // Reduce currentText until it is less than maxWidth or is a single word
-    // futureText var keeps track of text not yet written to a text line
     while (ctx.measureText(currentText).width > maxWidth && wordsInCurrent > 1) {
         wordsInCurrent--;
         currentText = futureText = "";
@@ -38,10 +43,9 @@ function createMultilineText(ctx, textToWrite, maxWidth, text) {
             }
         }
     }
-    text.push(currentText); // Write this line of text to the array
+    text.push(currentText);
     maxLineWidth = ctx.measureText(currentText).width;
 
-    // If there is any text left to be written call the function again
     if (futureText) {
         subWidth = createMultilineText(ctx, futureText, maxWidth, text);
         if (subWidth > maxLineWidth) {
@@ -49,7 +53,6 @@ function createMultilineText(ctx, textToWrite, maxWidth, text) {
         }
     }
 
-    // Return the maximum line width
     return maxLineWidth;
 }
 
