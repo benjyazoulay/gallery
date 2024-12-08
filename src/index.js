@@ -125,7 +125,7 @@ document.addEventListener("DOMContentLoaded", () => {
             event.stopPropagation();
             event.stopImmediatePropagation();
             // Seulement pour le clic, déclencher handleLogin
-            if (eventType === 'click') {
+            if (eventType === 'click' || eventType === 'touchstart') {
                 handleLogin();
             }
         });
