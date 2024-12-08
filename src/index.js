@@ -99,38 +99,45 @@ document.addEventListener("DOMContentLoaded", () => {
     const loginButton = document.createElement('button');
     loginButton.style.zIndex = '1000';
     loginButton.style.position = 'absolute';
-    loginButton.style.bottom = '10px'; // Placer en bas
-    loginButton.style.left = '10px';   // Placer à gauche
+    loginButton.style.bottom = '10px';
+    loginButton.style.left = '10px';
     loginButton.style.padding = '10px'; 
-    loginButton.style.borderRadius = '50%'; // Faire une capsule ronde
-    loginButton.style.backgroundColor = 'rgba(255, 255, 255, 0.8)'; // Fond blanc avec transparence
+    loginButton.style.borderRadius = '50%';
+    loginButton.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
     loginButton.style.cursor = 'pointer';
     loginButton.style.border = 'none'; 
-    loginButton.style.pointerEvents = 'auto'; // Assurez-vous que le bouton peut recevoir des événements
+    loginButton.style.pointerEvents = 'auto';
     
-    // Ajouter l'image comme icône
     const icon = document.createElement('img');
-    icon.src = './user.svg'; // Assurez-vous que 'user.svg' est bien présent
-    icon.style.width = '30px'; // Ajuster la taille de l'icône
+    icon.src = './user.svg';
+    icon.style.width = '30px';
     icon.style.height = '30px'; 
     
     loginButton.appendChild(icon);
-    
-    // Empêche la propagation de l'événement de clic
-    loginButton.addEventListener('click', (event) => {
-        console.log("Bouton de connexion cliqué");
-        event.preventDefault(); // Empêche le comportement par défaut
-        event.stopPropagation(); // Empêche la propagation de l'événement
-        handleLogin();
-    }, true); // Utiliser la phase de capture
-    
-    loginButton.addEventListener('touchstart', (event) => {
-        console.log("Bouton de connexion touchstart");
-        event.preventDefault();
-        event.stopPropagation(); // Empêche la propagation de l'événement
-        handleLogin();
-    }, true); // Utiliser la phase de capture
-    
+
+    // Liste des événements à intercepter
+    const events = ['click', 'mousedown', 'mouseup', 'touchstart', 'touchend', 'touchmove', 'pointerdown', 'pointerup'];
+
+    events.forEach(eventType => {
+        loginButton.addEventListener(eventType, (event) => {
+            console.log(`Bouton de connexion ${eventType}`);
+            event.preventDefault();
+            event.stopPropagation();
+            event.stopImmediatePropagation();
+            // Seulement pour le clic, déclencher handleLogin
+            if (eventType === 'click') {
+                handleLogin();
+            }
+        });
+    });
+
     document.body.appendChild(loginButton);
     console.log("Ajout du bouton de connexion");
+
+    // Assurez-vous que le canvas est derrière le bouton
+    const canvas = regl._gl.canvas;
+    canvas.style.position = 'absolute';
+    canvas.style.left = '0';
+    canvas.style.top = '0';
+    canvas.style.zIndex = '0'; // Doit être inférieur au zIndex du bouton
 });
