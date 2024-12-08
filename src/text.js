@@ -1,6 +1,6 @@
 'strict mode';
 
-const textHeight = 32;
+const textHeight = 22;
 const textCanvas = document.createElement('canvas');
 const maxWidth = textCanvas.width = textCanvas.height = 1024;
 const ctx = textCanvas.getContext('2d');
@@ -19,42 +19,57 @@ ctx.webkitImageSmoothingEnabled = false;
 ctx.textBaseline = "bottom";
 ctx.fillStyle = "#aaa";
 
-// Reste du code...
 function createMultilineText(ctx, textToWrite, maxWidth, text) {
-    var currentText = textToWrite;
-    var futureText;
-    var subWidth = 0;
-    var maxLineWidth = 0;
-
-    var wordArray = textToWrite.split(" ");
-    var wordsInCurrent, wordArrayLength;
-    wordsInCurrent = wordArrayLength = wordArray.length;
-
-    while (ctx.measureText(currentText).width > maxWidth && wordsInCurrent > 1) {
-        wordsInCurrent--;
-        currentText = futureText = "";
-        for (var i = 0; i < wordArrayLength; i++) {
-            if (i < wordsInCurrent) {
-                currentText += wordArray[i];
-                if (i + 1 < wordsInCurrent) currentText += " ";
-            } else {
-                futureText += wordArray[i];
-                if (i + 1 < wordArrayLength) futureText += " ";
+    // Scinder le texte en sections sur la base des double astérisques tout en supprimant les *
+    let parsedText = textToWrite.replace(/\*\*/g, '');
+    // Tronquer le texte juste avant le mot "Description"
+    const descriptionIndex = parsedText.indexOf("Description");
+    if (descriptionIndex !== -1) {
+        parsedText = parsedText.substring(0, descriptionIndex).trim();
+    }
+    // Diviser le texte en sections tout en gardant "Titre : contenu"
+    const sections = parsedText.split(/\s(?=\w+\s?:)/).map(section => section.trim());
+    let maxLineWidth = 0;
+    sections.forEach(section => {
+        const testLineWidth = ctx.measureText(section).width;
+        if (testLineWidth > maxWidth) {
+            let currentLine = '';
+            let words = section.split(' ');
+            words.forEach(word => {
+                const testLine = currentLine + (currentLine ? ' ' : '') + word;
+                const testLineWidth = ctx.measureText(testLine).width;
+                if (testLineWidth > maxWidth && currentLine) {
+                    currentLine = stripPrefix(currentLine);
+                    text.push(currentLine);
+                    currentLine = word;
+                } else {
+                    currentLine = testLine;
+                }
+            });
+            if (currentLine) {
+                currentLine = stripPrefix(currentLine);
+                text.push(currentLine);
+                const currentLineWidth = ctx.measureText(currentLine).width;
+                if (currentLineWidth > maxLineWidth) {
+                    maxLineWidth = currentLineWidth;
+                }
+            }
+        } else {
+            section = stripPrefix(section);
+            text.push(section);
+            if (testLineWidth > maxLineWidth) {
+                maxLineWidth = testLineWidth;
             }
         }
-    }
-    text.push(currentText);
-    maxLineWidth = ctx.measureText(currentText).width;
-
-    if (futureText) {
-        subWidth = createMultilineText(ctx, futureText, maxWidth, text);
-        if (subWidth > maxLineWidth) {
-            maxLineWidth = subWidth;
-        }
-    }
-
+    });
     return maxLineWidth;
 }
+
+function stripPrefix(line) {
+    // Utilise une regex pour supprimer tout avant et y compris le premier ":"
+    return line.replace(/^[^:]*:\s*/, '');
+}
+
 
 module.exports = {
     init(texture, textToWrite, paintingWidth=maxWidth) {
