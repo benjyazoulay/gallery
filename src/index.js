@@ -107,7 +107,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	loginButton.style.backgroundColor = 'rgba(255, 255, 255, 0.8)'; // Fond blanc avec transparence
 	loginButton.style.cursor = 'pointer';
 	loginButton.style.border = 'none'; 
-	
+
 	// Ajouter l'image comme icône
 	const icon = document.createElement('img');
 	icon.src = './user.svg'; // Assurez-vous que 'user.png' est bien présent à la racine
@@ -115,10 +115,16 @@ document.addEventListener("DOMContentLoaded", () => {
 	icon.style.height = '30px'; 
 
 	loginButton.appendChild(icon);
-	
-	loginButton.addEventListener('click', handleLogin);
+
+	// Empêche la propagation de l'événement de clic
+	loginButton.addEventListener('click', (event) => {
+		event.stopPropagation(); // Empêche la propagation de l'événement de clic
+		handleLogin();
+	});
+
 	loginButton.addEventListener('touchstart', (event) => {
 		event.preventDefault();
+		event.stopPropagation(); // Empêche la propagation de l'événement de touchstart
 		handleLogin();
 	});
 
