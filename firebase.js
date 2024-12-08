@@ -19,5 +19,12 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 const storage = firebase.storage();
-
+auth.setPersistence(firebase.auth.Auth.Persistence.SESSION)
+    .then(() => {
+        console.log("Persistance de session configurée.");
+    })
+    .catch((error) => {
+        console.error("Erreur de configuration de la persistance :", error);
+    });
+    
 module.exports = { auth, db, storage };
