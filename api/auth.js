@@ -7,17 +7,14 @@ const handleLogin = async () => {
     console.log("Tentative de connexion...");
     const googleProvider = new firebase.auth.GoogleAuthProvider();
     try {
-        // Redirection au lieu du popup
-        await auth.signInWithRedirect(googleProvider);
-        // Vous pouvez écouter l'événement de redirection pour récupérer l'état de la session
-        auth.getRedirectResult().then((result) => {
-            if (result.user) {
-                console.log("Utilisateur connecté !");
-                console.log("Email de l'utilisateur:", result.user.email);
-            }
-        }).catch((error) => {
-            console.error("Erreur de connexion:", error);
-        });
+        const result = await auth.signInWithPopup(googleProvider);
+        console.log("Utilisateur connecté !");
+        
+        // Récupérer et afficher l'email de l'utilisateur
+        const user = result.user;
+        if (user) {
+            console.log("Email de l'utilisateur:", user.email);
+        }
     } catch (error) {
         console.error("Erreur de connexion:", error);
     }
